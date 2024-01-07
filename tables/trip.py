@@ -22,7 +22,7 @@ def get_trip_by_id():
         if not trip_id:
             return jsonify({"error": "Missing required parameter"}), 400
 
-        response = supabase.table("trip").select("id", "name", "departureplace", "arrivalplace", "departuredate", "arrivaldate").eq("id", trip_id).execute()
+        response = supabase.table("trip").select().eq("id", trip_id).execute()
 
         if 'error' in response.data:
             return jsonify({"error": f"Supabase error: {response.data['error']}"}), 500
@@ -32,7 +32,7 @@ def get_trip_by_id():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
-## Get trip by ID
+## Get trips by user ID
 @trip_blueprint.route('/get_trips_by_userid', methods=['GET'])
 def get_trips_by_userid():
     try: 
@@ -41,7 +41,9 @@ def get_trips_by_userid():
         if not userid:
             return jsonify({"error": "Missing required parameter"}), 400
 
-        response = supabase.table("trip").select("id", "name", "departuredate", "arrivaldate").eq("userid", userid).execute()
+        response = supabase.table("trip").select(
+            "id", "name", "departuredate", "arrivaldate"
+            ).eq("userid", userid).execute()
 
         if 'error' in response.data:
             return jsonify({"error": f"Supabase error: {response.data['error']}"}), 500
@@ -142,4 +144,3 @@ def update_trip_by_id():
 
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-

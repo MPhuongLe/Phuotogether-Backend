@@ -33,8 +33,8 @@ def get_user_by_id():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
 ## Get user by ID
-@user_blueprint.route('/get_user_account', methods=['POST'])
-def get_user_account():
+@user_blueprint.route('/get_user_by_account', methods=['POST'])
+def get_user_by_account():
     try: 
         emailortel = request.args.get('emailortel')
         password = request.args.get('password')
