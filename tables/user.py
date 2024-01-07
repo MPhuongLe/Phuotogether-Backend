@@ -46,7 +46,7 @@ def get_user_by_account():
 
         user_data = response.data[0]
         if 'password' in user_data and user_data['password'] == password:
-            return jsonify({"id": user_data['id']})
+            return json.dumps(response.data, ensure_ascii=False)
         else:
             return jsonify({"error": "Invalid credentials"}), 401
 
