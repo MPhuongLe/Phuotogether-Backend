@@ -42,7 +42,7 @@ def get_user_by_account():
         if not emailortel or not password:
             return jsonify({"error": "Missing required parameter"}), 400
 
-        response = supabase.table("user").select("id", "password").eq("emailortel", emailortel).execute()
+        response = supabase.table("user").select("*").eq("emailortel", emailortel).execute()
 
         user_data = response.data[0]
         if 'password' in user_data and user_data['password'] == password:
