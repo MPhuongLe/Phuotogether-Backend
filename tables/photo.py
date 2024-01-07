@@ -130,7 +130,7 @@ def insert_photo():
 
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-        
+
 ## Delete photo by ID
 @photo_blueprint.route('/delete_photo', methods=['DELETE'])
 def delete_photo_by_id():
