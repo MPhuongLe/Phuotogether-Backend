@@ -51,7 +51,7 @@ def get_user_by_account():
             return jsonify({"error": "Invalid credentials"}), 401
 
     except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        return jsonify({"error": "Invalid credentials"}), 500
 
 # Insert user 
 @user_blueprint.route('/insert_user', methods=['POST'])
