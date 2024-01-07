@@ -33,20 +33,22 @@ def get_user_by_id():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
 ## Get user by ID
-@user_blueprint.route('/get_user_account', methods=['GET'])
+@user_blueprint.route('/get_user_account', methods=['POST'])
 def get_user_account():
     try: 
-        user_emailortel = request.args.get('emailortel')
+        emailortel = request.args.get('emailortel')
+        password = request.args.get('password')
 
-        if not user_emailortel:
+        if not emailortel or not password:
             return jsonify({"error": "Missing required parameter"}), 400
 
-        response = supabase.table("user").select("id", "logintype", "password").eq("emailortel", user_emailortel).execute()
+        response = supabase.table("user").select("id", "password").eq("emailortel", emailortel).execute()
 
-        if 'error' in response.data:
-            return jsonify({"error": f"Supabase error: {response.data['error']}"}), 500
+        user_data = response.data[0]
+        if 'password' in user_data and user_data['password'] == password:
+            return jsonify({"id": user_data['id']})
         else:
-            return json.dumps(response.data, ensure_ascii=False)
+            return jsonify({"error": "Invalid credentials"}), 401
 
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
