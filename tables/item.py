@@ -7,7 +7,7 @@ item_blueprint = Blueprint('item', __name__)
 
 supabase = DatabaseConnector().connection
 
-## Get items by trip ID
+## Get items by trip id
 @item_blueprint.route('/get_items', methods=['GET'])
 def get_items():
     try: 
@@ -27,7 +27,7 @@ def get_items():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
     
-# Update items
+# Update items by trip id
 @item_blueprint.route('/update_items', methods=['POST'])
 def update_items():
     try:
@@ -45,7 +45,7 @@ def update_items():
         if 'error' in delete_response.data:
             return jsonify({"error": f"Supabase error: {delete_response.data['error']}"}), 500
 
-        # Process the data and insert new items
+        # Insert new items
         new_items_data = [{"tripid": tripid, "itemno": i + 1, "name": item} for i, item in enumerate(items)]
         insert_response = supabase.table("item").upsert(new_items_data).execute()
 
@@ -67,7 +67,6 @@ def delete_items():
         if not tripid:
             return jsonify({"error": "Missing required parameter"}), 400
 
-        # Delete existing items for the specified trip
         response = supabase.table("item").delete().eq("tripid", tripid).execute()
         
         if 'error' in response.data:
@@ -77,4 +76,3 @@ def delete_items():
         
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-    

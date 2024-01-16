@@ -104,10 +104,10 @@ def get_photos_by_userid():
 @photo_blueprint.route('/insert_photo', methods=['POST'])
 def insert_photo():
     try:
-        albumid = request.args.get('albumid');
-        time = request.args.get('time');
-        uri = request.args.get('uri');
-        note = request.args.get('note');
+        albumid = request.get('albumid');
+        time = request.get('time');
+        uri = request.get('uri');
+        note = request.get('note');
 
         if not albumid or not time or not uri:
             return jsonify({"error": "Missing required parameters"}), 400

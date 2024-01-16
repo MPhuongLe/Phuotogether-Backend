@@ -7,12 +7,6 @@ user_blueprint = Blueprint('user', __name__)
 
 supabase = DatabaseConnector().connection
 
-## Get all user
-# @user_blueprint.route('/get_all_user', methods=['GET'])
-# def get_all_user():
-#     response = supabase.table("user").select("*").execute()
-#     return json.dumps(response.data, ensure_ascii=False)
-
 ## Get user by ID
 @user_blueprint.route('/get_user', methods=['GET'])
 def get_user_by_id():
@@ -36,8 +30,8 @@ def get_user_by_id():
 @user_blueprint.route('/get_user_by_account', methods=['POST'])
 def get_user_by_account():
     try: 
-        emailortel = request.args.get('emailortel')
-        password = request.args.get('password')
+        emailortel = request.get('emailortel')
+        password = request.get('password')
 
         if not emailortel or not password:
             return jsonify({"error": "Missing required parameter"}), 400
@@ -57,10 +51,10 @@ def get_user_by_account():
 @user_blueprint.route('/insert_user', methods=['POST'])
 def insert_user():
     try:
-        emailortel = request.args.get('emailortel');
-        logintype = request.args.get('logintype', type=bool);
-        password = request.args.get('password');
-        fullname = request.args.get('fullname');
+        emailortel = request.get('emailortel');
+        logintype = request.get('logintype', type=bool);
+        password = request.get('password');
+        fullname = request.get('fullname');
 
         if not emailortel or not logintype or not password:
             return jsonify({"error": "Missing required parameters"}), 400

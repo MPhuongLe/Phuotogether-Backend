@@ -7,12 +7,6 @@ album_blueprint = Blueprint('album', __name__)
 
 supabase = DatabaseConnector().connection
 
-## Get all album
-# @album_blueprint.route('/get_all_album', methods=['GET'])
-# def get_all_album():
-#     response = supabase.table("album").select("*").execute()
-#     return json.dumps(response.data, ensure_ascii=False)
-
 ## Get album by ID
 @album_blueprint.route('/get_album', methods=['GET'])
 def get_album_by_id():
@@ -55,9 +49,9 @@ def get_albums_by_tripid():
 @album_blueprint.route('/insert_album', methods=['POST'])
 def insert_album():
     try:
-        name = request.args.get('name');
-        tripid = request.args.get('tripid');
-        passedpoint = request.args.get('passedpoint');
+        name = request.get('name');
+        tripid = request.get('tripid');
+        passedpoint = request.get('passedpoint');
 
         if not name or not tripid or not passedpoint:
             return jsonify({"error": "Missing required parameters"}), 400
@@ -82,7 +76,7 @@ def insert_album():
 @album_blueprint.route('/delete_album', methods=['DELETE'])
 def delete_album_by_id():
     try:
-        album_id = request.args.get('id')
+        album_id = request.get('id')
         
         if not album_id:
             return jsonify({"error": "Missing required parameters"}), 400
@@ -101,9 +95,9 @@ def delete_album_by_id():
 @album_blueprint.route('/update_album', methods=['PUT'])
 def update_album_by_id():
     try:
-        album_id = request.args.get('id', type=int)
-        name = request.args.get('name');
-        passedpoint = request.args.get('passedpoint');
+        album_id = request.get('id', type=int)
+        name = request.get('name');
+        passedpoint = request.get('passedpoint');
 
         if not album_id:
             return jsonify({"error": "Missing required parameters"}), 400
