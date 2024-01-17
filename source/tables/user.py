@@ -44,6 +44,8 @@ def find_user_file(user_id):
 def get_user_file():
     try:
         user_id = request.args.get('id')
+        # Ensure the user ID is a valid filename
+        user_id = ''.join(c for c in user_id if c.isalnum() or c in ('_', '-'))
 
         if not user_id:
             return jsonify({"error": "Missing required parameter"}), 400
@@ -78,6 +80,36 @@ def get_user_by_account():
 
     except Exception as e:
         return jsonify({"error": "Invalid credentials"}), 500
+    
+@user_blueprint.route('/update_avatar', methods=['POST'])
+def update_avatar():
+    try:
+        user_id = request.form.get('id')
+
+        if not user_id:
+            return jsonify({"error": "Missing required parameter 'id'"}), 400
+
+        # Check if the request contains a file
+        if 'avatar' not in request.files:
+            return jsonify({"error": "No file provided"}), 400
+
+        avatar_file = request.files['avatar']
+        _, file_extension = os.path.splitext(avatar_file.filename)
+
+        # Ensure the user ID is a valid filename
+        user_id = ''.join(c for c in user_id if c.isalnum() or c in ('_', '-'))
+
+        # Assuming the files are stored in a directory named 'images/AVATAR'
+        user_files_dir = '../images/AVATAR'
+
+        # Save the new avatar file
+        avatar_path = os.path.join(user_files_dir, f'{user_id}{file_extension}')
+        avatar_file.save(avatar_path)
+
+        return jsonify({"success": "Avatar updated successfully"}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 # Insert user 
 @user_blueprint.route('/insert_user', methods=['POST'])
