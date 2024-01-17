@@ -30,8 +30,9 @@ def get_user_by_id():
 @user_blueprint.route('/get_user_by_account', methods=['POST'])
 def get_user_by_account():
     try: 
-        emailortel = request.get('emailortel')
-        password = request.get('password')
+        data = request.get_json()
+        emailortel = data.get('emailortel')
+        password = data.get('password')
 
         if not emailortel or not password:
             return jsonify({"error": "Missing required parameter"}), 400
@@ -51,12 +52,14 @@ def get_user_by_account():
 @user_blueprint.route('/insert_user', methods=['POST'])
 def insert_user():
     try:
-        emailortel = request.get('emailortel');
-        logintype = request.get('logintype', type=bool);
-        password = request.get('password');
-        fullname = request.get('fullname');
+        data = request.get_json()
+        emailortel = data.get('emailortel')
+        logintype = data.get('logintype', True) # Default value = True
+        password = data.get('password')
+        fullname = data.get('fullname')
+        print(data, emailortel, logintype, password, fullname)
 
-        if not emailortel or not logintype or not password:
+        if not emailortel or not password:
             return jsonify({"error": "Missing required parameters"}), 400
 
         user_data = {
@@ -80,8 +83,8 @@ def insert_user():
 @user_blueprint.route('/delete_user', methods=['DELETE'])
 def delete_user_by_id():
     try:
-        print(request)
-        user_id = request.args.get('id')
+        data = request.get_json()
+        user_id = data.get('id')
         
         if not user_id:
             return jsonify({"error": "User ID is missing"}), 400
@@ -101,9 +104,10 @@ def delete_user_by_id():
 def update_user_by_id():
     updated = []
     try:
-        user_id = request.args.get('id', type=int)
-        password = request.args.get('password')
-        fullname = request.args.get('fullname')
+        data = request.get_json()
+        user_id = data.get('id', 0)
+        password = data.get('password')
+        fullname = data.get('fullname')
 
         if not user_id or (not password and not fullname):
             return jsonify({"error": "Missing required parameters"}), 400

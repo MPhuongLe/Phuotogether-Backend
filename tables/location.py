@@ -31,10 +31,11 @@ def get_location_by_id():
 @location_blueprint.route('/insert_location', methods=['POST'])
 def insert_location():
     try:
-        latitude = request.get('latitude');
-        longitude = request.get('longitude');
-        address = request.get('address');
-        name = request.get('name');
+        data = request.get_json()
+        latitude = data.get('latitude');
+        longitude = data.get('longitude');
+        address = data.get('address');
+        name = data.get('name');
 
         if not latitude or not longitude:
             return jsonify({"error": "Missing required parameters"}), 400
@@ -62,7 +63,8 @@ def insert_location():
 @location_blueprint.route('/delete_location', methods=['DELETE'])
 def delete_location_by_id():
     try:
-        location_id = request.get('id')
+        data = request.get_json()
+        location_id = data.get('id')
         
         if not location_id:
             return jsonify({"error": "Missing required parameters"}), 400
@@ -81,11 +83,12 @@ def delete_location_by_id():
 @location_blueprint.route('/update_location', methods=['PUT'])
 def update_location_by_id():
     try:
-        location_id = request.get('id', type=int)
-        latitude = request.get('latitude');
-        longitude = request.get('longitude');
-        address = request.get('address');
-        name = request.get('name');
+        data = request.get_json()
+        location_id = data.get('id', type=int)
+        latitude = data.get('latitude');
+        longitude = data.get('longitude');
+        address = data.get('address');
+        name = data.get('name');
 
         if not location_id:
             return jsonify({"error": "Missing required parameters"}), 400

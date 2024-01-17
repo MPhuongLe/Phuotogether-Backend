@@ -7,12 +7,6 @@ photo_blueprint = Blueprint('photo', __name__)
 
 supabase = DatabaseConnector().connection
 
-## Get all photo
-# @photo_blueprint.route('/get_all_photo', methods=['GET'])
-# def get_all_photo():
-#     response = supabase.table("photo").select("*").execute()
-#     return json.dumps(response.data, ensure_ascii=False)
-
 ## Get photo by ID
 @photo_blueprint.route('/get_photo', methods=['GET'])
 def get_photo_by_id():
@@ -55,7 +49,8 @@ def get_photos_by_albumid():
 @photo_blueprint.route('/get_photos_by_userid', methods=['GET'])
 def get_photos_by_userid():
     try: 
-        userid = request.args.get('userid')
+        data = request.get_json()
+        userid = data.args.get('userid')
 
         if not userid:
             return jsonify({"error": "Missing required parameter"}), 400
@@ -104,10 +99,11 @@ def get_photos_by_userid():
 @photo_blueprint.route('/insert_photo', methods=['POST'])
 def insert_photo():
     try:
-        albumid = request.get('albumid');
-        time = request.get('time');
-        uri = request.get('uri');
-        note = request.get('note');
+        data = request.get_json()
+        albumid = data.get('albumid');
+        time = data.get('time');
+        uri = data.get('uri');
+        note = data.get('note');
 
         if not albumid or not time or not uri:
             return jsonify({"error": "Missing required parameters"}), 400
@@ -135,7 +131,8 @@ def insert_photo():
 @photo_blueprint.route('/delete_photo', methods=['DELETE'])
 def delete_photo_by_id():
     try:
-        photo_id = request.args.get('id')
+        data = request.get_json()
+        photo_id = data.get('id')
         
         if not photo_id:
             return jsonify({"error": "Missing required parameters"}), 400
@@ -150,26 +147,3 @@ def delete_photo_by_id():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
-# ## Update photo by  [update note only??????]
-# @photo_blueprint.route('/update_photo', methods=['PUT'])
-# def update_photo_by_id():
-#     try:
-#         photo_id = request.args.get('id', type=int)
-#         note = request.args.get('note');
-
-#         if not photo_id:
-#             return jsonify({"error": "Missing required parameters"}), 400
-
-#         update_data = {}
-#         if note:
-#             update_data['note'] = note
-        
-#         response = supabase.table("photo").update(update_data).eq('id', photo_id).execute()
-
-#         if 'error' in response.data:
-#             return jsonify({"error": f"Supabase error: {response.data['error']}"}), 500
-#         else:
-#             return json.dumps(response.data, ensure_ascii=False)
-
-#     except Exception as e:
-#         return jsonify({"error": f"An error occurred: {str(e)}"}), 500

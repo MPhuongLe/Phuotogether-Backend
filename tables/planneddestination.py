@@ -52,12 +52,13 @@ def get_planned_destinations_by_userid():
 @planned_destination_blueprint.route('/insert_planned_destination', methods=['POST'])
 def insert_planned_destination():
     try:
-        userid = request.get('userid');
-        name = request.get('name');
-        departureplace = request.get('departureplace');
-        arrivalplace = request.get('arrivalplace');
-        departuredate = request.get('departuredate');
-        arrivaldate = request.get('arrivaldate');
+        data = request.get_json()
+        userid = data.get('userid');
+        name = data.get('name');
+        departureplace = data.get('departureplace');
+        arrivalplace = data.get('arrivalplace');
+        departuredate = data.get('departuredate');
+        arrivaldate = data.get('arrivaldate');
 
         if not userid or not name or not departureplace or not arrivalplace or not departuredate or not arrivaldate:
             return jsonify({"error": "Missing required parameters"}), 400
@@ -88,7 +89,8 @@ def insert_planned_destination():
 @planned_destination_blueprint.route('/delete_planned_destination', methods=['DELETE'])
 def delete_planned_destination_by_id():
     try:
-        planned_destination_id = request.args.get('id')
+        data = request.get_json()
+        planned_destination_id = data.get('id')
         
         if not planned_destination_id:
             return jsonify({"error": "Missing required parameters"}), 400
@@ -107,12 +109,13 @@ def delete_planned_destination_by_id():
 @planned_destination_blueprint.route('/update_planned_destination', methods=['PUT'])
 def update_planned_destination_by_id():
     try:
-        planned_destination_id = request.args.get('id', type=int)
-        name = request.args.get('name');
-        departureplace = request.args.get('departureplace');
-        arrivalplace = request.args.get('arrivalplace');
-        departuredate = request.args.get('departuredate');
-        arrivaldate = request.args.get('arrivaldate');
+        data = request.get_json()
+        planned_destination_id = data.get('id', type=int)
+        name = data.get('name');
+        departureplace = data.get('departureplace');
+        arrivalplace = data.get('arrivalplace');
+        departuredate = data.get('departuredate');
+        arrivaldate = data.get('arrivaldate');
 
         if not planned_destination_id:
             return jsonify({"error": "Missing required parameters"}), 400

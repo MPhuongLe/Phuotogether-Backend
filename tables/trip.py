@@ -16,7 +16,7 @@ def get_trip_by_id():
         if not trip_id:
             return jsonify({"error": "Missing required parameter"}), 400
 
-        response = supabase.table("trip").select().eq("id", trip_id).execute()
+        response = supabase.table("trip").select("*").eq("id", trip_id).execute()
 
         if 'error' in response.data:
             return jsonify({"error": f"Supabase error: {response.data['error']}"}), 500
@@ -35,7 +35,7 @@ def get_trips_by_userid():
         if not userid:
             return jsonify({"error": "Missing required parameter"}), 400
 
-        response = supabase.table("trip").select().eq("userid", userid).execute()
+        response = supabase.table("trip").select("*").eq("userid", userid).execute()
 
         if 'error' in response.data:
             return jsonify({"error": f"Supabase error: {response.data['error']}"}), 500
@@ -50,12 +50,13 @@ def get_trips_by_userid():
 @trip_blueprint.route('/insert_trip', methods=['POST'])
 def insert_trip():
     try:
-        userid = request.get('userid');
-        name = request.get('name');
-        departureplace = request.get('departureplace');
-        arrivalplace = request.get('arrivalplace');
-        departuredate = request.get('departuredate');
-        arrivaldate = request.get('arrivaldate');
+        data = request.get_json()
+        userid = data.get('userid');
+        name = data.get('name');
+        departureplace = data.get('departureplace');
+        arrivalplace = data.get('arrivalplace');
+        departuredate = data.get('departuredate');
+        arrivaldate = data.get('arrivaldate');
 
         if not userid or not name or not departureplace or not arrivalplace or not departuredate or not arrivaldate:
             return jsonify({"error": "Missing required parameters"}), 400
@@ -86,7 +87,8 @@ def insert_trip():
 @trip_blueprint.route('/delete_trip', methods=['DELETE'])
 def delete_trip_by_id():
     try:
-        trip_id = request.get('id')
+        data = request.get_json()
+        trip_id = data.get('id')
         
         if not trip_id:
             return jsonify({"error": "Missing required parameters"}), 400
@@ -104,13 +106,14 @@ def delete_trip_by_id():
 ## Update trip by ID
 @trip_blueprint.route('/update_trip', methods=['PUT'])
 def update_trip_by_id():
-    try:
-        trip_id = request.get('id', type=int)
-        name = request.get('name');
-        departureplace = request.get('departureplace');
-        arrivalplace = request.get('arrivalplace');
-        departuredate = request.get('departuredate');
-        arrivaldate = request.get('arrivaldate');
+    try: 
+        data = request.get_json()
+        trip_id = data.get('id', 0)
+        name = data.get('name');
+        departureplace = data.get('departureplace');
+        arrivalplace = data.get('arrivalplace');
+        departuredate = data.get('departuredate');
+        arrivaldate = data.get('arrivaldate');
 
         if not trip_id:
             return jsonify({"error": "Missing required parameters"}), 400

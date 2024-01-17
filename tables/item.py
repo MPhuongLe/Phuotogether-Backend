@@ -32,7 +32,6 @@ def get_items():
 def update_items():
     try:
         data = request.get_json()
-
         tripid = data.get('tripid')
         items = data.get('items')
 
@@ -62,7 +61,8 @@ def update_items():
 @item_blueprint.route('/delete_items', methods=['DELETE'])
 def delete_items():
     try:
-        tripid = request.args.get('tripid')
+        data = request.get_json()
+        tripid = data.get('tripid')
 
         if not tripid:
             return jsonify({"error": "Missing required parameter"}), 400
@@ -76,3 +76,4 @@ def delete_items():
         
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+ 
