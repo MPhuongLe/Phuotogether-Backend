@@ -26,19 +26,38 @@ def get_user_by_id():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
-def find_user_file(user_id):
-    # Assuming the files are stored in a directory named 'images/AVATAR'
-    user_files_dir = '../images/AVATAR'
+# def find_user_file(user_id):
+#     # Assuming the files are stored in a directory named 'images/AVATAR'
+#     user_files_dir = '../images/AVATAR'
 
-    # Iterate over common image formats (you can extend this list based on your needs)
-    image_formats = ['jpg', 'jpeg', 'png', 'gif', 'bmp']
+#     # Iterate over common image formats (you can extend this list based on your needs)
+#     image_formats = ['jpg', 'jpeg', 'png', 'gif', 'bmp']
 
-    for format in image_formats:
-        file_path = os.path.join(user_files_dir, f'{user_id}.{format}')
-        if os.path.exists(file_path):
-            return file_path
+#     for format in image_formats:
+#         file_path = os.path.join(user_files_dir, f'{user_id}.{format}')
+#         if os.path.exists(file_path):
+#             return file_path
 
-    return None
+#     return None
+
+# @user_blueprint.route('/get_avatar', methods=['GET'])
+# def get_user_file():
+#     try:
+#         user_id = request.args.get('id')
+#         # Ensure the user ID is a valid filename
+#         user_id = ''.join(c for c in user_id if c.isalnum() or c in ('_', '-'))
+
+#         if not user_id:
+#             return jsonify({"error": "Missing required parameter"}), 400
+#         file_path = find_user_file(user_id)
+
+#         if file_path:
+#             return send_file(file_path, as_attachment=True)
+#         else:
+#             return jsonify({"error": "File not found"}), 404
+
+#     except Exception as e:
+#         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 @user_blueprint.route('/get_avatar', methods=['GET'])
 def get_user_file():
@@ -47,17 +66,17 @@ def get_user_file():
         # Ensure the user ID is a valid filename
         user_id = ''.join(c for c in user_id if c.isalnum() or c in ('_', '-'))
 
-        if not user_id:
-            return jsonify({"error": "Missing required parameter"}), 400
-        file_path = find_user_file(user_id)
+        filename = f"../images/AVATAR/{user_id}.json"
+        with open(filename, 'r') as file:
+            avatar = json.load(file)
 
-        if file_path:
-            return send_file(file_path, as_attachment=True)
-        else:
-            return jsonify({"error": "File not found"}), 404
+        return jsonify({"avatar": avatar})
+
+    except FileNotFoundError:
+        return jsonify({"error": f"Avatar of user {user_id} not found."}), 404
 
     except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        return jsonify({"error": str(e)}), 500
     
 ## Get user by ID
 @user_blueprint.route('/get_user_by_account', methods=['POST'])
@@ -84,32 +103,26 @@ def get_user_by_account():
 @user_blueprint.route('/update_avatar', methods=['POST'])
 def update_avatar():
     try:
-        user_id = request.form.get('id')
+        json_data = request.get_json()
 
-        if not user_id:
-            return jsonify({"error": "Missing required parameter 'id'"}), 400
+        # Check if the required fields are present
+        if 'id' in json_data and 'avatar' in json_data:
+            user_id = json_data['id']
+            avatar_data = json_data['avatar']
 
-        # Check if the request contains a file
-        if 'avatar' not in request.files:
-            return jsonify({"error": "No file provided"}), 400
+            # Save the received JSON data into a JSON file
+            filename = f"../images/AVATAR/{user_id}.json"
+            with open(filename, 'w') as file:
+                json.dump(avatar_data, file)
 
-        avatar_file = request.files['avatar']
-        _, file_extension = os.path.splitext(avatar_file.filename)
+            return jsonify({"message": "Data received and saved successfully."})
 
-        # Ensure the user ID is a valid filename
-        user_id = ''.join(c for c in user_id if c.isalnum() or c in ('_', '-'))
-
-        # Assuming the files are stored in a directory named 'images/AVATAR'
-        user_files_dir = '../images/AVATAR'
-
-        # Save the new avatar file
-        avatar_path = os.path.join(user_files_dir, f'{user_id}{file_extension}')
-        avatar_file.save(avatar_path)
-
-        return jsonify({"success": "Avatar updated successfully"}), 200
+        else:
+            return jsonify({"error": "Invalid JSON format. Missing 'id' or 'avatar'."}), 400
 
     except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        return jsonify({"error": str(e)}), 500
+
 
 # Insert user 
 @user_blueprint.route('/insert_user', methods=['POST'])
