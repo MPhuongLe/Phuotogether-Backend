@@ -66,9 +66,12 @@ def insert_planned_destination():
         planned_destination_data['tripid'] = tripid
 
         current_destinations_response = supabase.table("planneddestination").select("*").eq("tripid", tripid).order('destinationno', desc=True).execute()
-        print(current_destinations_response)
-        max_destination_no = current_destinations_response.data[0]['destinationno']
-
+        
+        if current_destinations_response.data and len(current_destinations_response.data) > 0:
+            max_destination_no = current_destinations_response.data[0]['destinationno']
+        else:
+            max_destination_no = 0
+            
         planned_destination_data['destinationno'] = max_destination_no + 1
         planned_destination_data['locationid'] = locationid
 
