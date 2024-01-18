@@ -16,7 +16,7 @@ def get_location_by_id():
         if not location_id:
             return jsonify({"error": "Missing required parameter"}), 400
 
-        response = supabase.table("location").select().eq("id", location_id).execute()
+        response = supabase.table("location").select("*").eq("id", location_id).execute()
 
         if 'error' in response.data:
             return jsonify({"error": f"Supabase error: {response.data['error']}"}), 500
@@ -59,56 +59,56 @@ def insert_location():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
         
-## Delete location by ID
-@location_blueprint.route('/delete_location', methods=['DELETE'])
-def delete_location_by_id():
-    try:
-        data = request.get_json()
-        location_id = data.get('id')
+# ## Delete location by ID
+# @location_blueprint.route('/delete_location', methods=['DELETE'])
+# def delete_location_by_id():
+#     try:
+#         data = request.get_json()
+#         location_id = data.get('id')
         
-        if not location_id:
-            return jsonify({"error": "Missing required parameters"}), 400
+#         if not location_id:
+#             return jsonify({"error": "Missing required parameters"}), 400
         
-        response = supabase.table("location").delete().eq("id", location_id).execute()
+#         response = supabase.table("location").delete().eq("id", location_id).execute()
         
-        if 'error' in response.data:
-            return jsonify({"error": f"Supabase error: {response.data['error']}"}), 500
-        else:
-            return json.dumps(response.data, ensure_ascii=False)
+#         if 'error' in response.data:
+#             return jsonify({"error": f"Supabase error: {response.data['error']}"}), 500
+#         else:
+#             return json.dumps(response.data, ensure_ascii=False)
         
-    except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+#     except Exception as e:
+#         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
-## Update location by ID
-@location_blueprint.route('/update_location', methods=['PUT'])
-def update_location_by_id():
-    try:
-        data = request.get_json()
-        location_id = data.get('id', type=int)
-        latitude = data.get('latitude');
-        longitude = data.get('longitude');
-        address = data.get('address');
-        name = data.get('name');
+# ## Update location by ID
+# @location_blueprint.route('/update_location', methods=['PUT'])
+# def update_location_by_id():
+#     try:
+#         data = request.get_json()
+#         location_id = data.get('id', type=int)
+#         latitude = data.get('latitude');
+#         longitude = data.get('longitude');
+#         address = data.get('address');
+#         name = data.get('name');
 
-        if not location_id:
-            return jsonify({"error": "Missing required parameters"}), 400
+#         if not location_id:
+#             return jsonify({"error": "Missing required parameters"}), 400
 
-        update_data = {}
-        if longitude:
-            update_data['longitude'] = longitude
-        if latitude:
-            update_data['latitude'] = latitude
-        if address:
-            update_data['address'] = address
-        if name:
-            update_data['name'] = name
+#         update_data = {}
+#         if longitude:
+#             update_data['longitude'] = longitude
+#         if latitude:
+#             update_data['latitude'] = latitude
+#         if address:
+#             update_data['address'] = address
+#         if name:
+#             update_data['name'] = name
         
-        response = supabase.table("location").update(update_data).eq('id', location_id).execute()
+#         response = supabase.table("location").update(update_data).eq('id', location_id).execute()
 
-        if 'error' in response.data:
-            return jsonify({"error": f"Supabase error: {response.data['error']}"}), 500
-        else:
-            return json.dumps(response.data, ensure_ascii=False)
+#         if 'error' in response.data:
+#             return jsonify({"error": f"Supabase error: {response.data['error']}"}), 500
+#         else:
+#             return json.dumps(response.data, ensure_ascii=False)
 
-    except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+#     except Exception as e:
+#         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
