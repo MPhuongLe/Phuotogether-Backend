@@ -165,7 +165,6 @@ def delete_user_by_id():
 ## Update user by ID
 @user_blueprint.route('/update_user', methods=['PUT'])
 def update_user_by_id():
-    updated = []
     try:
         data = request.get_json()
         user_id = data.get('id', 0)
@@ -178,10 +177,8 @@ def update_user_by_id():
         update_data = {}
         if password:
             update_data['password'] = password
-            updated.append('password')
         if fullname:
             update_data['fullname'] = fullname
-            updated.append('fullname')
 
         response = supabase.table("user").update(update_data).eq('id', user_id).execute()
 
