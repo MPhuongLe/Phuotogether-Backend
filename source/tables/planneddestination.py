@@ -10,13 +10,15 @@ supabase = DatabaseConnector().connection
 ## Get planned_destination by ID
 @planned_destination_blueprint.route('/get_planned_destination', methods=['GET'])
 def get_planned_destination_by_id():
+    print('Hello')
     try: 
-        planned_destination_id = request.args.get('id')
+        trip_id = request.args.get('tripid')
+        destination_no = request.args.get('destination_no')
 
-        if not planned_destination_id:
+        if not trip_id or not destination_no:
             return jsonify({"error": "Missing required parameter"}), 400
 
-        response = supabase.table("planned_destination").select().eq("id", planned_destination_id).execute()
+        response = supabase.table("planneddestination").select("*").eq("tripid", trip_id).eq("destinationno", destination_no).execute()
 
         if 'error' in response.data:
             return jsonify({"error": f"Supabase error: {response.data['error']}"}), 500
@@ -26,18 +28,16 @@ def get_planned_destination_by_id():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
-## Get planned_destinations by user ID
-@planned_destination_blueprint.route('/get_planned_destinations_by_userid', methods=['GET'])
-def get_planned_destinations_by_userid():
+## Get planned_destinations by trip ID
+@planned_destination_blueprint.route('/get_planned_destinations_by_tripid', methods=['GET'])
+def get_planned_destinations_by_tripid():
     try: 
-        userid = request.args.get('userid')
+        tripid = request.args.get('tripid')
 
-        if not userid:
+        if not tripid:
             return jsonify({"error": "Missing required parameter"}), 400
 
-        response = supabase.table("planned_destination").select(
-            "id", "name", "departuredate", "arrivaldate"
-            ).eq("userid", userid).execute()
+        response = supabase.table("planneddestination").select("*").eq("tripid", tripid).execute()
 
         if 'error' in response.data:
             return jsonify({"error": f"Supabase error: {response.data['error']}"}), 500
@@ -75,7 +75,7 @@ def insert_planned_destination():
         if arrivaldate:
             planned_destination_data['arrivaldate'] = arrivaldate
 
-        response = supabase.table("planned_destination").upsert([planned_destination_data]).execute()
+        response = supabase.table("planneddestination").upsert([planned_destination_data]).execute()
 
         if 'error' in response.data:
             return jsonify({"error": f"Supabase error: {response.data['error']}"}), 500
@@ -95,7 +95,7 @@ def delete_planned_destination_by_id():
         if not planned_destination_id:
             return jsonify({"error": "Missing required parameters"}), 400
         
-        response = supabase.table("planned_destination").delete().eq("id", planned_destination_id).execute()
+        response = supabase.table("planneddestination").delete().eq("id", planned_destination_id).execute()
         
         if 'error' in response.data:
             return jsonify({"error": f"Supabase error: {response.data['error']}"}), 500
@@ -132,7 +132,7 @@ def update_planned_destination_by_id():
         if arrivaldate:
             update_data['arrivaldate'] = arrivaldate
         
-        response = supabase.table("planned_destination").update(update_data).eq('id', planned_destination_id).execute()
+        response = supabase.table("planneddestination").update(update_data).eq('id', planned_destination_id).execute()
 
         if 'error' in response.data:
             return jsonify({"error": f"Supabase error: {response.data['error']}"}), 500
